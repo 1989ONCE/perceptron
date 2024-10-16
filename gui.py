@@ -122,7 +122,7 @@ class gui():
 
         self.best_weight_label = tk.Label(self.result_frame, text='Best Weight(%.2f): ', bg='white')
         self.best_weight = tk.Label(self.result_frame, text='...', bg='white')
-        self.best_acc_label = tk.Label(self.result_frame, text='Best Training Accuracy: ', bg='white', wraplength=100, justify='left')
+        self.best_acc_label = tk.Label(self.result_frame, text='Best Testing Accuracy: ', bg='white', wraplength=100, justify='left')
         self.best_acc = tk.Label(self.result_frame, text='...', bg='white')
         self.best_epoch_label = tk.Label(self.result_frame, text='Best Epoch: ', bg='white')
         self.best_epoch = tk.Label(self.result_frame, text='...', bg='white')
@@ -323,7 +323,14 @@ class gui():
             print('Epoch:', self.epoch_box.get())
             print('Learning Rate:', self.lrn_rate_box.get())
             self.epoch = int(self.epoch_box.get())
-
+            if(self.dim > 2):
+                messagebox.showerror('showerror', "Can't train data with more than 2 dimensions")
+                self.train_btn.config(state='normal')
+                self.load_btn.config(state='normal')
+                self.select_btn.config(state='normal')
+                self.save_btn.config(state='normal')
+                self.stop_update_btn.place_forget()
+                return
             # Initialize perceptron
             p = perceptron()
             p.init_weight(self.dim)
@@ -350,7 +357,7 @@ class gui():
             self.train_result = p.get_all_train_result()
             self.test_result = p.get_all_test_result()
 
-            self.best_acc.config(text=str(p.get_best_train_acc()*100)+'%')
+            self.best_acc.config(text=str(p.get_best_test_acc()*100)+'%')
             self.best_epoch.config(text=str(p.get_best_epoch()))
             self.best_weight.config(text=str([float(round(w, 2)) for w in p.get_best_weight()]))
 

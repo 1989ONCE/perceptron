@@ -61,15 +61,11 @@ class perceptron():
             self.train_acc = self.evaluate(Y_train, pred_y)
             self.train_result.append([self.weight.copy(), self.train_acc])
 
-            if self.train_acc > self.best_train_acc:
-                self.best_train_acc = self.train_acc
-                self.best_weight = self.weight.copy()
-                self.best_epoch = epoch
+            # if self.train_acc > self.best_train_acc:
+            #     self.best_train_acc = self.train_acc
+            #     self.best_weight = self.weight.copy()
+            #     self.best_epoch = epoch
             print('=========== Epoch', epoch, '==========\nTrain Accuracy:', self.train_acc)
-            
-        print('Best Weight:', self.best_weight)
-        print('Best Epoch:', self.best_epoch)
-        print('Best Train Accuracy:', self.best_train_acc)
 
     def test(self, x_test, y_test):
         self.test_result = []
@@ -83,12 +79,21 @@ class perceptron():
                 xi = np.array(x_test[i])
                 vj = np.dot(self.train_result[epoch][0], xi)
                 pred_y.append(self.sgn(vj))
-            epoch += 1
+            
             self.test_acc = self.evaluate(y_test, pred_y)
-            self.test_result.append([self.weight.copy(), self.test_acc])
-            print('=========== Epoch', epoch, '==========\nTest Accuracy:', self.test_acc)
+            self.test_result.append([self.train_result[epoch][0], self.test_acc])
+            
+            print('=========== Epoch', epoch + 1, '==========\nTest Accuracy:', self.test_acc)
             if self.test_acc > self.best_test_acc:
-                    self.best_test_acc = self.test_acc
+                self.best_test_acc = self.test_acc
+                self.best_weight = self.train_result[epoch][0]
+                self.best_epoch = epoch
+            
+            epoch += 1
+        
+        print('Best Weight:', self.best_weight)
+        print('Best Epoch:', self.best_epoch)
+        print('Best Test Accuracy:', self.best_test_acc)
             
 
     def sgn(self, vj): # 硬限制函數
@@ -116,8 +121,8 @@ class perceptron():
     def get_best_epoch(self):
         return self.best_epoch
     
-    def get_best_train_acc(self):
-        return self.best_train_acc
+    def get_best_test_acc(self):
+        return self.best_test_acc
     
     def get_all_train_result(self):
         return self.train_result
